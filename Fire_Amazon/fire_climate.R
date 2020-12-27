@@ -114,33 +114,29 @@ abline(c(0,1))
 
 # Input predictors(raster)
 
-
-
-
-
 # Random Forest per fire group
 #-------------------------
-pred_groups = split(seq_len(nrow(df_adj)), df_adj$fire)
-
-preds = numeric(nrow(df_adj))
-
-for(f in names(pred_groups)) {
-  
-  
-  
-  train_rows = df_adj$month == f
-  
-  df_adj_rf = randomForest(Size ~ .,
-                           #ntree = 500,
-                           data = df_adj[train_rows, ],
-                           importance=TRUE)
-  
-  print(df_adj_rf)
- 
-  varImpPlot(df_adj_rf, main = f)
-  
-  pred_rows = pred_groups[[f]]
-   
-  preds[pred_rows] = predict(df_adj_rf,
-                             df_adj[pred_rows, ])
-}
+# pred_groups = split(seq_len(nrow(df_adj)), df_adj$fire)
+# 
+# preds = numeric(nrow(df_adj))
+# 
+# for(f in names(pred_groups)) {
+#   
+#   
+#   
+#   train_rows = df_adj$month == f
+#   
+#   df_adj_rf = randomForest(Size ~ .,
+#                            #ntree = 500,
+#                            data = df_adj[train_rows, ],
+#                            importance=TRUE)
+#   
+#   print(df_adj_rf)
+#  
+#   varImpPlot(df_adj_rf, main = f)
+#   
+#   pred_rows = pred_groups[[f]]
+#    
+#   preds[pred_rows] = predict(df_adj_rf,
+#                              df_adj[pred_rows, ])
+# }
