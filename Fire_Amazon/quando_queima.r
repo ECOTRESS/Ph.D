@@ -194,7 +194,7 @@ send_table_time_2020 = def_fires_complete %>%
   summarise(n = n()) %>%
   drop_na() 
 
-WriteXLS(send_table_time_2020, "/Users/usuario/Google Drive (santoslr@uci.edu)/UCI/Chapter_1/results/tables/when_2020.xlsx",
+WriteXLS::WriteXLS(send_table_time_2020, "/Users/usuario/Google Drive (santoslr@uci.edu)/UCI/Chapter_1/results/tables/when_2020.xlsx",
          AdjWidth = TRUE, BoldHeaderRow = TRUE)
 
 
@@ -210,7 +210,7 @@ send_table_prop_2020 = def_fires_complete %>%
   group_by(UF) %>%
   mutate(percent = `sum(tempo_desmate_fogo)`/sum(`sum(tempo_desmate_fogo)`)) 
 
-WriteXLS(send_table_prop_2020, "/Users/usuario/Google Drive (santoslr@uci.edu)/UCI/Chapter_1/results/tables/proportion_2020.xlsx",
+WriteXLS::WriteXLS(send_table_prop_2020, "/Users/usuario/Google Drive (santoslr@uci.edu)/UCI/Chapter_1/results/tables/proportion_2020.xlsx",
          AdjWidth = TRUE, BoldHeaderRow = TRUE)
 
 #########
@@ -246,7 +246,7 @@ p2 = def_fires_complete %>%
   ggplot() + aes(x = tempo, y = n, fill = UF) +
   geom_col() + ylab("Número de polígonos de desmatamento\n com duplicata") + 
   xlab("tempo em meses") +
-  ggtitle("Jan 2020 - Oct 2020") +
+  ggtitle("Jan 2020 - Dec 2020") +
   #ggtitle("Jan 2019 - Set 2020") +
   geom_text(
     aes(label = paste0(round(percent * 100,1),"%")),
@@ -265,56 +265,56 @@ p2 = def_fires_complete %>%
 ggsave("/Users/usuario/Google Drive (santoslr@uci.edu)/UCI/Chapter_1/results/figures/Quando_queima/quando_queima_estado_Oct_2020.png",
        p2 ,device = "png")
 
-# Por mes
-quando_mes = def_fires_complete %>%
-  group_by(VIEW_DATE,tempo, UF) %>%
-  summarise(n = n()) %>%
-  drop_na() %>%
-  group_by(UF) %>%
-  mutate(percent = n/sum(n)) %>%
-  separate(VIEW_DATE, c("ano","mes","dia")) %>%
-  mutate(mes_name = case_when(mes == "01" ~ "Jan",
-                              mes == "02" ~ "Fev",
-                              mes == "03" ~ "Mar",
-                              mes == "04" ~ "Abr",
-                              mes == "05" ~ "Mai",
-                              mes == "06" ~ "Jun",
-                              mes == "07" ~ "Jul",
-                              mes == "08" ~ "Ago",
-                              mes == "09" ~ "Set",
-                              mes == "10" ~ "Out"))
-
-p3 = ggplot(transform(quando_mes, 
-                      mes_f = factor(mes_name, levels = c("Jan",
-                                                          "Fev",
-                                                          "Mar",
-                                                          "Abr",
-                                                          "Mai",
-                                                          "Jun",
-                                                          "Jul",
-                                                          "Ago",
-                                                          "Set",
-                                                          "Out")))) +
-  aes(x = as.factor(tempo), y = n, fill = UF) +
-  geom_col() + ylab("Quantidade de polígonos de desmatamento\n que queimaram") + 
-  xlab("tempo em meses") +
-  ggtitle("Jan 2020 - Oct 2020") +
-  # geom_text(
-  #   aes(label = paste0(round(percent * 100,1),"%")),
-  #   position = position_stack(vjust = 0.5),
-  #   colour = "black", fontface = "bold",
-  #   size = 3
-  # ) +
-  #scale_fill_manual(values = c("orange", "darkred")) +
-  theme_minimal(base_size = 14) +
-  theme( legend.title = element_blank()#,
-         #legend.position = "none"#,
-         #     axis.title.x = element_blank()
-  ) +
-  facet_wrap(~UF, scales = "free_x")
-
-ggsave("/Users/usuario/Google Drive (santoslr@uci.edu)/UCI/Chapter_1/results/figures/Quando_queima/quando_queima_estado_Oct_2020.png",
-       p3 ,device = "png")
+# # Por mes
+# quando_mes = def_fires_complete %>%
+#   group_by(VIEW_DATE,tempo, UF) %>%
+#   summarise(n = n()) %>%
+#   drop_na() %>%
+#   group_by(UF) %>%
+#   mutate(percent = n/sum(n)) %>%
+#   separate(VIEW_DATE, c("ano","mes","dia")) %>%
+#   mutate(mes_name = case_when(mes == "01" ~ "Jan",
+#                               mes == "02" ~ "Fev",
+#                               mes == "03" ~ "Mar",
+#                               mes == "04" ~ "Abr",
+#                               mes == "05" ~ "Mai",
+#                               mes == "06" ~ "Jun",
+#                               mes == "07" ~ "Jul",
+#                               mes == "08" ~ "Ago",
+#                               mes == "09" ~ "Set",
+#                               mes == "10" ~ "Out"))
+# 
+# p3 = ggplot(transform(quando_mes, 
+#                       mes_f = factor(mes_name, levels = c("Jan",
+#                                                           "Fev",
+#                                                           "Mar",
+#                                                           "Abr",
+#                                                           "Mai",
+#                                                           "Jun",
+#                                                           "Jul",
+#                                                           "Ago",
+#                                                           "Set",
+#                                                           "Out")))) +
+#   aes(x = as.factor(tempo), y = n, fill = UF) +
+#   geom_col() + ylab("Quantidade de polígonos de desmatamento\n que queimaram") + 
+#   xlab("tempo em meses") +
+#   ggtitle("Jan 2020 - Oct 2020") +
+#   # geom_text(
+#   #   aes(label = paste0(round(percent * 100,1),"%")),
+#   #   position = position_stack(vjust = 0.5),
+#   #   colour = "black", fontface = "bold",
+#   #   size = 3
+#   # ) +
+#   #scale_fill_manual(values = c("orange", "darkred")) +
+#   theme_minimal(base_size = 14) +
+#   theme( legend.title = element_blank()#,
+#          #legend.position = "none"#,
+#          #     axis.title.x = element_blank()
+#   ) +
+#   facet_wrap(~UF, scales = "free")
+# 
+# ggsave("/Users/usuario/Google Drive (santoslr@uci.edu)/UCI/Chapter_1/results/figures/Quando_queima/quando_queima_estado_Oct_2020.png",
+#        p3 ,device = "png")
 
 
 
@@ -378,7 +378,7 @@ p3 = def_fires_complete %>%
     colour = "black", fontface = "bold",
     size = 5
   ) +
-  ggtitle("Jan 2020 - Set 2020") +
+  ggtitle("Jan 2020 - Dec 2020") +
   #ggtitle("Jan 2019 - Set 2020") +
   #scale_fill_manual(values = c("orange", "darkred","gray")) +
   scale_fill_manual(values = c("orange", "darkred")) +
