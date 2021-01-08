@@ -12,46 +12,46 @@ wd =  "/Users/usuario/Google Drive (santoslr@uci.edu)/UCI/Chapter_1/data/shapefi
 ##########################################################################
 # Focos
 
-focos_2018 = st_read(file.path(wd,"Focos_BDQueimadas-2/Focos.2018-01-01.2018-12-31.shp"))
-focos_2019 = st_read(file.path(wd,"Focos_BDQueimadas-2/Focos.2019-01-01.2019-12-31.shp"))
-focos_2020 = st_read(file.path(wd,"Focos_BDQueimadas-3/Focos_2020-01-01_2020-11-12.shp"))
+#focos_2018 = st_read(file.path(wd,"Focos_BDQueimadas-2/Focos.2018-01-01.2018-12-31.shp"))
+#focos_2019 = st_read(file.path(wd,"Focos_BDQueimadas-2/Focos.2019-01-01.2019-12-31.shp"))
+focos_2020 = st_read(file.path(wd,"Focos_BDQueimadas-4/Focos_2020-01-01_2020-12-31.shp"))
 
 # Adjust for merging
-focos_2018 = focos_2018 %>% dplyr::select(-AreaIndu)
-focos_2019 = focos_2019 %>% dplyr::select(-regiaoespe)
+#focos_2018 = focos_2018 %>% dplyr::select(-AreaIndu)
+#focos_2019 = focos_2019 %>% dplyr::select(-regiaoespe)
 focos_2020 = focos_2020 %>% dplyr::select(-regiaoespe)
 
-colnames(focos_2018) = names(focos_2019) # colnames 2018 equals 2019
+#colnames(focos_2018) = names(focos_2019) # colnames 2018 equals 2019
 
-focos = rbind(focos_2018,focos_2019,focos_2020)
-
+#focos = rbind(focos_2018,focos_2019,focos_2020)
+focos = focos_2020 # Analise apenas para 2020
 # Focos 2020
 focos_sub = focos %>%
   separate(col = datahora, c("data","hora"), sep = " ") %>%
-  filter(data >= "2020/01/01" #& data <= "2020/10/31"
+  filter(data >= "2020/01/01" & data <= "2020/12/31"
   )
 
 # Focos 2019
-focos_sub = focos %>%
-  separate(col = datahora, c("data","hora"), sep = " ") %>%
-  filter(data >= "2019/01/01" & data <= "2019/12/31")
+#focos_sub = focos %>%
+#  separate(col = datahora, c("data","hora"), sep = " ") %>%
+#  filter(data >= "2019/01/01" & data <= "2019/12/31")
 
 
 ##########################################################################
 # Desmatamento
-deter = st_read(file.path(wd,"deter-amz-public-2020nov12/deter_public.shp"))
+deter = st_read(file.path(wd,"deter-amz-public-2021jan08/deter_public.shp"))
 
 # Desmatamento Only 2019
-deter_sub = deter %>%
-  filter(VIEW_DATE >= paste0("2019/01/01") &
-           VIEW_DATE <= paste0("2019/12/31")) %>%
-  filter(CLASSNAME  == "DESMATAMENTO_CR" |
-           CLASSNAME  == "DESMATAMENTO_VEG")
+# deter_sub = deter %>%
+#   filter(VIEW_DATE >= paste0("2019/01/01") &
+#            VIEW_DATE <= paste0("2019/12/31")) %>%
+#   filter(CLASSNAME  == "DESMATAMENTO_CR" |
+#            CLASSNAME  == "DESMATAMENTO_VEG")
 
-# Desmatamento Jan 2020 - Oct 2020
+# Desmatamento Jan 2020 - Dez 2020
 deter_sub = deter %>%
-  filter(VIEW_DATE >= paste0("2020/01/01") #&
-         # VIEW_DATE <= paste0("2020/10/31")
+  filter(VIEW_DATE >= paste0("2020/01/01") &
+          VIEW_DATE <= paste0("2020/12/31")
   ) %>%
   filter(CLASSNAME  == "DESMATAMENTO_CR" |
            CLASSNAME  == "DESMATAMENTO_VEG")
@@ -158,29 +158,29 @@ def_fires_complete = def_fires %>%
 ### Send table to Ane ###############################################
 
 # Time
-send_table_time_2019 = def_fires_complete %>%
-  group_by(tempo, UF) %>%
-  summarise(n = n()) %>%
-  drop_na() 
-
-WriteXLS(send_table_time_2019, "/Users/usuario/Google Drive (santoslr@uci.edu)/UCI/Chapter_1/results/tables/when_2019.xlsx",
-         AdjWidth = TRUE, BoldHeaderRow = TRUE)
-
-
-# Propo
-send_table_prop_2019 = def_fires_complete %>%
-  mutate(antes_depois = ifelse(tempo < 0,"antes","depois")) %>%
-  #mutate(antes_depois_complete = ifelse(is.na(antes_depois),"nunca",antes_depois)) %>%
-  group_by(UF,tempo,antes_depois) %>%
-  summarise(tempo_desmate_fogo = n()) %>%
-  group_by(UF,antes_depois) %>%
-  summarise(sum(tempo_desmate_fogo)) %>%
-  drop_na() %>%
-  group_by(UF) %>%
-  mutate(percent = `sum(tempo_desmate_fogo)`/sum(`sum(tempo_desmate_fogo)`)) 
-
-WriteXLS(send_table_prop_2019, "/Users/usuario/Google Drive (santoslr@uci.edu)/UCI/Chapter_1/results/tables/proportion_2019.xlsx",
-         AdjWidth = TRUE, BoldHeaderRow = TRUE)
+# send_table_time_2019 = def_fires_complete %>%
+#   group_by(tempo, UF) %>%
+#   summarise(n = n()) %>%
+#   drop_na() 
+# 
+# WriteXLS(send_table_time_2019, "/Users/usuario/Google Drive (santoslr@uci.edu)/UCI/Chapter_1/results/tables/when_2019.xlsx",
+#          AdjWidth = TRUE, BoldHeaderRow = TRUE)
+# 
+# 
+# # Propo
+# send_table_prop_2019 = def_fires_complete %>%
+#   mutate(antes_depois = ifelse(tempo < 0,"antes","depois")) %>%
+#   #mutate(antes_depois_complete = ifelse(is.na(antes_depois),"nunca",antes_depois)) %>%
+#   group_by(UF,tempo,antes_depois) %>%
+#   summarise(tempo_desmate_fogo = n()) %>%
+#   group_by(UF,antes_depois) %>%
+#   summarise(sum(tempo_desmate_fogo)) %>%
+#   drop_na() %>%
+#   group_by(UF) %>%
+#   mutate(percent = `sum(tempo_desmate_fogo)`/sum(`sum(tempo_desmate_fogo)`)) 
+# 
+# WriteXLS(send_table_prop_2019, "/Users/usuario/Google Drive (santoslr@uci.edu)/UCI/Chapter_1/results/tables/proportion_2019.xlsx",
+#          AdjWidth = TRUE, BoldHeaderRow = TRUE)
 
 
 
@@ -223,7 +223,7 @@ p1 = def_fires_complete %>%
   ggplot() + aes(x = tempo, y = n, fill = UF) +
   geom_col() + ylab("Número de polígonos de desmatamento\n com duplicata") + 
   xlab("tempo em meses") +
-  ggtitle("Janeiro 2020 - Oct 2020") +
+  ggtitle("Janeiro 2020 - Dezembro 2020") +
   #ggtitle("Jan 2019 - Set 2020") +
   #scale_fill_manual(values = c("orange", "darkred")) +
   theme_minimal(base_size = 14) +
